@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Define all attribute and methods for console"""
 import cmd
+import json
 from models import storage, classes
 
 
@@ -134,12 +135,25 @@ class HBNBCommand(cmd.Cmd):
                 destroy(line)
             elif args[1].startswith('update(') and args[1].endswith(')'):
                 args[1] = args[1][7:-1]
-                args = args[1].split(", ")
-                for i in range(min(len(args), 2)):
-                    args[i] = eval(args[i])
-                line += " " +  " ".join(args)
+                b_d = args[1].find("{")
+                e_d = args[1].find("}")
                 update = getattr(self, 'do_update')
-                update(line)
+                try:
+                    d_form = json.loads(args[1][b_d:e_d + 1].replace("'", '"'))
+                except Exception as e:
+                    args = args[1].split(", ")
+                    for i in range(min(len(args), 2)):
+                        args[i] = eval(args[i])
+                    line += " " + " ".join(args)
+                    update(line)
+                else:
+                    id = args[1].split(", ")[0][1:-1]
+                    for k, v in d_form.items():
+                        if type(v) == str:
+                            cmd = line + " " + id + " " + k + ' "' + v + '"'
+                        else:
+                            cmd = line + " " + id + " " + k + ' ' + str(v)
+                        update(cmd)
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
