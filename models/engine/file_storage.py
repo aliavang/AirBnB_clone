@@ -9,8 +9,6 @@ from models.state import State
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-
-
 classes = {
     "BaseModel": BaseModel,
     "User": User,
@@ -20,6 +18,8 @@ classes = {
     "Place": Place,
     "Review": Review
 }
+
+
 class FileStorage:
     """A class for object serialization using a JSON file."""
     __file_path = "file.json"
@@ -46,5 +46,6 @@ class FileStorage:
         if config.is_file():
             with open(FileStorage.__file_path, "r") as f:
                 FileStorage.__objects = {
-                    k: classes[v["__class__"]](**v) for k, v in json.load(f).items()
+                    k: classes[v["__class__"]](**v)
+                    for k, v in json.load(f).items()
                 }
